@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ChatListView: View {
     @EnvironmentObject private var router: AppRouter
+    @EnvironmentObject private var clientsViewModel: CoachClientsListViewModel
 
     var body: some View {
         AppScreen(
@@ -11,7 +12,12 @@ struct ChatListView: View {
         .safeAreaInset(edge: .bottom) {
             CardView {
                 VStack(spacing: 12) {
-                    PrimaryButton(title: "Open Chat Detail") { router.push(.chatDetail) }
+                    PrimaryButton(title: "Open Chat Detail") {
+                        if let first = clientsViewModel.filteredClients.first {
+                            clientsViewModel.selectClient(first)
+                        }
+                        router.push(.chatDetail)
+                    }
                     PrimaryButton(title: "Empty State: No Messages") { router.push(.emptyStateNoMessages) }
                 }
             }
@@ -22,11 +28,12 @@ struct ChatListView: View {
 
 struct ChatDetailView: View {
     @EnvironmentObject private var router: AppRouter
+    @EnvironmentObject private var clientsViewModel: CoachClientsListViewModel
 
     var body: some View {
         AppScreen(
-            title: "Chat Detail",
-            subtitle: "История • Медиа • Заметки о клиенте"
+            title: clientsViewModel.selectedClient?.name ?? "Chat Detail",
+            subtitle: clientsViewModel.selectedClient.map { "\($0.email) • История • Медиа • Заметки о клиенте" } ?? "История • Медиа • Заметки о клиенте"
         )
         .safeAreaInset(edge: .bottom) {
             CardView {
@@ -63,4 +70,3 @@ struct SendMessageView: View {
 #Preview {
     FlowCoordinatorView()
 }
-
