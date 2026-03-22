@@ -54,9 +54,6 @@ struct CoachHomeView: View {
                         PrimaryButton(title: "Progress Analytics") {
                             router.push(.progressAnalytics)
                         }
-                        PrimaryButton(title: "AI Insights (Future)") {
-                            router.push(.aiInsights)
-                        }
                     }
                 }
             }

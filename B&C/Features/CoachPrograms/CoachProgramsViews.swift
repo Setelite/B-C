@@ -13,7 +13,6 @@ struct ProgramsLibraryView: View {
                 VStack(spacing: 12) {
                     PrimaryButton(title: "Create Program (Screen)") { router.push(.createProgramScreen) }
                     PrimaryButton(title: "Program Builder") { router.push(.programBuilder) }
-                    PrimaryButton(title: "Program Marketplace (Future)") { router.push(.programMarketplace) }
                     PrimaryButton(title: "Empty State: No Programs") { router.push(.emptyStateNoPrograms) }
                 }
             }
@@ -164,3 +163,4 @@ struct AddExerciseToWorkoutView: View {
 #Preview {
     FlowCoordinatorView()
 }
+

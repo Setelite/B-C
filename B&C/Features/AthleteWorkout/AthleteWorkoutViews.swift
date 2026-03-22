@@ -11,7 +11,7 @@ struct StartWorkoutScreenView: View {
         .safeAreaInset(edge: .bottom) {
             CardView {
                 VStack(spacing: 12) {
-                    PrimaryButton(title: "Начать") { router.push(.exerciseExecution) }
+                    PrimaryButton(title: "Начать") { router.push(.workoutView) }
                     PrimaryButton(title: "Нет интернета") { router.push(.offlineMode) }
                 }
             }
@@ -48,7 +48,7 @@ struct ExerciseExecutionView: View {
         .safeAreaInset(edge: .bottom) {
             CardView {
                 VStack(spacing: 12) {
-                    PrimaryButton(title: "Log Set") { router.push(.logSet) }
+                    PrimaryButton(title: "Log Set") { router.push(.workoutView) }
                     PrimaryButton(title: "Next Exercise") { router.push(.nextExercise) }
                     PrimaryButton(title: "Завершить тренировку") { router.push(.completeWorkout) }
                 }
@@ -58,11 +58,105 @@ struct ExerciseExecutionView: View {
     }
 }
 
+struct WorkoutView: View {
+    @EnvironmentObject private var router: AppRouter
+    @EnvironmentObject private var workoutViewModel: WorkoutViewModel
+
+    @State private var weight: String = ""
+    @State private var reps: String = ""
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Text(workoutViewModel.currentExerciseName)
+                .font(.title2)
+                .foregroundColor(.white)
+
+            if let plan = workoutViewModel.currentProgram.exercises.first(where: { $0.name == workoutViewModel.currentExerciseName }) {
+                Text("План: \(Int(plan.plannedWeight)) кг × \(plan.targetReps)")
+                    .foregroundColor(.white.opacity(0.7))
+                    .font(.subheadline)
+            }
+
+            Text("Упражнение \(workoutViewModel.currentExerciseIndex + 1) из \(max(workoutViewModel.currentProgram.exercises.count, 1))")
+                .foregroundColor(.white.opacity(0.7))
+                .font(.caption)
+
+            ForEach(workoutViewModel.currentSets.indices, id: \.self) { i in
+                let set = workoutViewModel.currentSets[i]
+                Text("\(Int(set.weight)) кг × \(set.reps)")
+                    .foregroundColor(.white)
+            }
+
+            HStack {
+                TextField("Вес", text: $weight)
+                    .keyboardType(.decimalPad)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .foregroundColor(.white)
+                    .padding(10)
+                    .background(Color.white.opacity(0.08))
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+                TextField("Повторы", text: $reps)
+                    .keyboardType(.numberPad)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .foregroundColor(.white)
+                    .padding(10)
+                    .background(Color.white.opacity(0.08))
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            }
+
+            PrimaryButton(title: "Сохранить подход") {
+                if let w = Double(weight.replacingOccurrences(of: ",", with: ".")),
+                   let r = Int(reps) {
+                    workoutViewModel.logSet(weight: w, reps: r)
+                    weight = ""
+                    reps = ""
+                }
+            }
+
+            PrimaryButton(title: "Следующее упражнение") {
+                if workoutViewModel.nextExercise() {
+                    weight = ""
+                    reps = ""
+                }
+            }
+
+            PrimaryButton(title: "Завершить тренировку") {
+                workoutViewModel.finishWorkout()
+                router.push(.saveWorkoutData)
+                router.push(.workoutSummary)
+            }
+
+            if !workoutViewModel.planUpdates.isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(workoutViewModel.planUpdates, id: \.self) { update in
+                        Text("✅ \(update)")
+                            .foregroundColor(.green)
+                    }
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
+                ForEach(workoutViewModel.recommendations, id: \.self) { rec in
+                    Text("👉 \(rec)")
+                        .foregroundColor(.orange)
+                }
+            }
+
+            Spacer()
+        }
+        .padding()
+        .background(Color.bgPrimary)
+    }
+}
+
 struct LogSetView: View {
     @EnvironmentObject private var router: AppRouter
-    @EnvironmentObject private var workoutSession: WorkoutSessionViewModel
+    @EnvironmentObject private var workoutViewModel: WorkoutViewModel
     @State private var weightText: String = ""
-    @State private var reps: Int = 8
+    @State private var repsText: String = ""
     @State private var showValidation: Bool = false
 
     var body: some View {
@@ -73,16 +167,29 @@ struct LogSetView: View {
         .safeAreaInset(edge: .bottom) {
             CardView {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text(workoutSession.currentExerciseName)
+                    Text(workoutViewModel.currentExerciseName)
                         .foregroundColor(.white)
                         .font(.headline)
 
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Вес (кг)")
-                            .foregroundColor(.white.opacity(0.7))
-                            .font(.caption)
-                        TextField("Например, 60", text: $weightText)
+                    ForEach(workoutViewModel.currentSets.indices, id: \.self) { i in
+                        let set = workoutViewModel.currentSets[i]
+                        Text("\(Int(set.weight)) кг × \(set.reps)")
+                            .foregroundColor(.white.opacity(0.8))
+                            .font(.subheadline)
+                    }
+
+                    HStack(spacing: 8) {
+                        TextField("Вес", text: $weightText)
                             .keyboardType(.decimalPad)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .foregroundColor(.white)
+                            .padding(10)
+                            .background(Color.white.opacity(0.08))
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+                        TextField("Повторы", text: $repsText)
+                            .keyboardType(.numberPad)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
                             .foregroundColor(.white)
@@ -91,30 +198,31 @@ struct LogSetView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     }
 
-                    Stepper(value: $reps, in: 1...50) {
-                        Text("Повторения: \(reps)")
-                            .foregroundColor(.white)
-                    }
-                    .tint(.brandPrimary)
-
                     if showValidation {
-                        Text("Введите корректный вес")
+                        Text("Введите корректные вес и повторы")
                             .foregroundColor(.red.opacity(0.9))
                             .font(.caption)
                     }
 
                     PrimaryButton(title: "Сохранить подход") {
-                        guard let weight = Double(weightText.replacingOccurrences(of: ",", with: ".")),
-                              weight > 0 else {
+                        guard let w = Double(weightText.replacingOccurrences(of: ",", with: ".")),
+                              let r = Int(repsText),
+                              w > 0, r > 0 else {
                             showValidation = true
                             return
                         }
                         showValidation = false
-                        workoutSession.logSet(weight: weight, reps: reps)
+                        workoutViewModel.logSet(weight: w, reps: r)
                         weightText = ""
-                        reps = 8
-                        router.pop()
+                        repsText = ""
                     }
+
+                    PrimaryButton(title: "Завершить тренировку") {
+                        workoutViewModel.finishWorkout()
+                        router.push(.workoutSummary)
+                    }
+
+                    PrimaryButton(title: "Следующий подход") { router.pop() }
                 }
             }
             .padding(16)
@@ -141,7 +249,7 @@ struct NextExerciseView: View {
 
 struct CompleteWorkoutV2View: View {
     @EnvironmentObject private var router: AppRouter
-    @EnvironmentObject private var workoutSession: WorkoutSessionViewModel
+    @EnvironmentObject private var workoutViewModel: WorkoutViewModel
 
     var body: some View {
         AppScreen(
@@ -151,8 +259,9 @@ struct CompleteWorkoutV2View: View {
         .safeAreaInset(edge: .bottom) {
             CardView {
                 VStack(spacing: 12) {
-                    PrimaryButton(title: "Завершить и сохранить") {
-                        workoutSession.finishWorkout()
+                    PrimaryButton(title: "Завершить тренировку") {
+                        workoutViewModel.finishWorkout()
+                        router.push(.saveWorkoutData)
                         router.push(.workoutSummary)
                     }
                     PrimaryButton(title: "Save Workout Data") { router.push(.saveWorkoutData) }
@@ -165,7 +274,7 @@ struct CompleteWorkoutV2View: View {
 
 struct WorkoutSummaryView: View {
     @EnvironmentObject private var router: AppRouter
-    @EnvironmentObject private var workoutSession: WorkoutSessionViewModel
+    @EnvironmentObject private var workoutViewModel: WorkoutViewModel
 
     var body: some View {
         AppScreen(
@@ -174,7 +283,8 @@ struct WorkoutSummaryView: View {
         )
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 12) {
-                AIRecommendationsCard(recommendations: workoutSession.recommendations)
+                AIRecommendationsCard(recommendations: workoutViewModel.recommendations)
+                AIPlanUpdateCard(updates: workoutViewModel.planUpdates)
 
                 CardView {
                     VStack(spacing: 12) {

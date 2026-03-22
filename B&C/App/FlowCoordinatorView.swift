@@ -2,17 +2,17 @@ import SwiftUI
 
 struct FlowCoordinatorView: View {
     @StateObject private var router = AppRouter()
-    @StateObject private var workoutSession = WorkoutSessionViewModel()
+    @StateObject private var workoutViewModel = WorkoutViewModel()
 
     var body: some View {
         NavigationStack(path: $router.path) {
             LoginScreenView()
                 .environmentObject(router)
-                .environmentObject(workoutSession)
+                .environmentObject(workoutViewModel)
                 .navigationDestination(for: AppRoute.self) { route in
                     destination(for: route)
                         .environmentObject(router)
-                        .environmentObject(workoutSession)
+                        .environmentObject(workoutViewModel)
                 }
         }
     }
@@ -132,6 +132,8 @@ struct FlowCoordinatorView: View {
             TodaysWorkoutView()
         case .startWorkoutScreen:
             StartWorkoutScreenView()
+        case .workoutView:
+            WorkoutView()
         case .workoutDetail, .workoutDetailFromCalendar:
             WorkoutDetailView()
         case .exerciseExecution:

@@ -14,17 +14,21 @@ struct AthleteTabBarView: View {
                 .tabItem { Label("My Program", systemImage: "calendar") }
                 .tag(1)
 
-            ProgressView2()
-                .tabItem { Label("Progress", systemImage: "waveform.path.ecg") }
+            ExerciseProgressView()
+                .tabItem { Label("Exercise", systemImage: "chart.xyaxis.line") }
                 .tag(2)
 
-            ChatListView()
-                .tabItem { Label("Messages", systemImage: "bubble.left") }
+            ProgressDashboardView()
+                .tabItem { Label("Progress", systemImage: "waveform.path.ecg") }
                 .tag(3)
+
+            CoachChatView()
+                .tabItem { Label("Messages", systemImage: "bubble.left") }
+                .tag(4)
 
             AthleteProfileView2()
                 .tabItem { Label("Profile", systemImage: "person.crop.circle") }
-                .tag(4)
+                .tag(5)
         }
         .tint(.brandPrimary)
         .navigationBarBackButtonHidden(true)

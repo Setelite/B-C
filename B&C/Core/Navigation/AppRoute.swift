@@ -70,6 +70,7 @@ enum AppRoute: Hashable {
     case athleteHome
     case todaysWorkout
     case startWorkoutScreen
+    case workoutView
     case workoutDetail
     case exerciseExecution
     case logSet

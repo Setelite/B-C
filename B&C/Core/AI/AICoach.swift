@@ -1,60 +1,62 @@
 import Foundation
 
-enum AICoach {
-    static func analyzeWorkout(workout: Workout) -> [String] {
-        let totalSets = workout.exercises.reduce(0) { $0 + $1.sets.count }
-        let totalReps = workout.exercises.flatMap { $0.sets }.reduce(0) { $0 + $1.reps }
-        let avgWeight = averageWeight(for: workout)
+final class AICoach {
+    static func adjustWeight(current: Double, reps: Int, target: Int) -> Double {
+        if reps > target {
+            return current + 2.5
+        } else if reps < target {
+            return max(0, current - 2.5)
+        } else {
+            return current
+        }
+    }
 
+    static func analyzeWorkout(workout: Workout) -> [String] {
         var recommendations: [String] = []
 
-        if totalSets < 8 {
-            recommendations.append("Добавь 1–2 подхода для объема")
+        for exercise in workout.exercises {
+            for set in exercise.sets {
+                if set.reps < 8 {
+                    recommendations.append("Снизь вес в \(exercise.name)")
+                } else if set.reps > 12 {
+                    recommendations.append("Увеличь вес в \(exercise.name)")
+                }
+            }
         }
 
-        if totalReps < 30 {
-            recommendations.append("Увеличь суммарные повторения")
-        }
-
-        if avgWeight < 70 {
-            recommendations.append("Постепенно увеличь рабочий вес")
-        }
-
-        if recommendations.isEmpty {
-            recommendations.append("Отличная работа! Продолжай в том же духе")
-        }
-
-        return recommendations
+        return recommendations.isEmpty ? ["Отличная работа! Продолжай в том же духе"] : recommendations
     }
 
     static func analyzeProgress() -> [String] {
         let workouts = WorkoutStorage.load()
 
-        guard workouts.count >= 3 else {
-            return ["Недостаточно данных для анализа прогресса"]
+        guard workouts.count > 3 else {
+            return ["Недостаточно данных"]
         }
 
-        let lastThree = workouts.suffix(3)
-        let avgWeight = averageWeight(for: Array(lastThree))
+        let last = workouts.suffix(3)
+        var avgWeight: Double = 0
+        var count = 0
+
+        for workout in last {
+            for ex in workout.exercises {
+                for set in ex.sets {
+                    avgWeight += set.weight
+                    count += 1
+                }
+            }
+        }
+
+        guard count > 0 else {
+            return ["Недостаточно данных"]
+        }
+
+        avgWeight /= Double(count)
 
         if avgWeight < 70 {
-            return ["Увеличь рабочий вес", "Следи за прогрессией каждую неделю"]
+            return ["Увеличь рабочий вес"]
+        } else {
+            return ["Прогресс хороший 🔥"]
         }
-
-        return ["Прогресс хороший", "Сохраняй стабильный объем и интенсивность"]
-    }
-
-    private static func averageWeight(for workout: Workout) -> Double {
-        let sets = workout.exercises.flatMap { $0.sets }
-        guard !sets.isEmpty else { return 0 }
-        let total = sets.reduce(0) { $0 + $1.weight }
-        return total / Double(sets.count)
-    }
-
-    private static func averageWeight(for workouts: [Workout]) -> Double {
-        let sets = workouts.flatMap { $0.exercises }.flatMap { $0.sets }
-        guard !sets.isEmpty else { return 0 }
-        let total = sets.reduce(0) { $0 + $1.weight }
-        return total / Double(sets.count)
     }
 }

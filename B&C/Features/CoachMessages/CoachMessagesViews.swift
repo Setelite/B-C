@@ -32,8 +32,6 @@ struct ChatDetailView: View {
             CardView {
                 VStack(spacing: 12) {
                     PrimaryButton(title: "Send Message") { router.push(.sendMessage) }
-                    PrimaryButton(title: "Share Workout") { router.push(.shareWorkout) }
-                    PrimaryButton(title: "Share Progress") { router.push(.shareProgress) }
                     PrimaryButton(title: "Push Notification: New Message") { router.push(.pushNotificationNewMessage) }
                 }
             }
@@ -65,3 +63,4 @@ struct SendMessageView: View {
 #Preview {
     FlowCoordinatorView()
 }
+

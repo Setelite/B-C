@@ -13,7 +13,6 @@ struct ClientsListScreenView: View {
                 VStack(spacing: 12) {
                     PrimaryButton(title: "Add Client") { router.push(.addClient) }
                     PrimaryButton(title: "Open Client Detail") { router.push(.clientDetail) }
-                    PrimaryButton(title: "Empty State: No Clients") { router.push(.emptyStateNoClients) }
                 }
             }
             .padding(16)
@@ -105,3 +104,4 @@ struct CoachProgressView: View {
         )
     }
 }
+

@@ -10,19 +10,11 @@ struct ExerciseProgressView: View {
 }
 
 struct ProgressView2: View {
-    @EnvironmentObject private var router: AppRouter
-
     var body: some View {
         AppScreen(
             title: "Progress",
             subtitle: "Графики • Метрики • Достижения"
         )
-        .safeAreaInset(edge: .bottom) {
-            CardView {
-                PrimaryButton(title: "Progress Dashboard") { router.push(.progressDashboard) }
-            }
-            .padding(16)
-        }
     }
 }
 
@@ -38,10 +30,8 @@ struct ProgressDashboardView: View {
             CardView {
                 VStack(spacing: 12) {
                     PrimaryButton(title: "Metrics History") { router.push(.metricsHistory) }
-                    PrimaryButton(title: "Exercise Progress") { router.push(.exerciseProgress) }
                     PrimaryButton(title: "Log Metrics") { router.push(.logMetrics) }
                     PrimaryButton(title: "Backend: Update Trends") { router.push(.backendUpdateTrends) }
-                    PrimaryButton(title: "AI Coach Assistant (Future)") { router.push(.aiCoachAssistant) }
                 }
             }
             .padding(16)
@@ -86,3 +76,4 @@ struct LogMetricsView: View {
 #Preview {
     FlowCoordinatorView()
 }
+

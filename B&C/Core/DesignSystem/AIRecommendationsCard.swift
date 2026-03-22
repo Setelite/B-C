@@ -22,11 +22,11 @@ struct AIRecommendationsCard: View {
                     ForEach(recommendations, id: \.self) { item in
                         HStack(alignment: .top, spacing: 8) {
                             Circle()
-                                .fill(Color.brandPrimary)
+                                .fill(Color.orange)
                                 .frame(width: 6, height: 6)
                                 .padding(.top, 6)
                             Text(item)
-                                .foregroundColor(.white)
+                                .foregroundColor(.orange)
                                 .font(.subheadline)
                         }
                     }
@@ -35,8 +35,12 @@ struct AIRecommendationsCard: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.card)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .background(Color.white.opacity(0.05))
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(Color.white.opacity(0.14), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
 
