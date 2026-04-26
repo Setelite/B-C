@@ -82,6 +82,44 @@ struct ProgramCategoryMetric: Identifiable {
     let count: Int
 }
 
+enum MuscleGroup: String, CaseIterable, Identifiable {
+    case chest
+    case back
+    case legs
+    case shoulders
+    case arms
+    case core
+    case cardio
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .chest: return "Грудь"
+        case .back: return "Спина"
+        case .legs: return "Ноги"
+        case .shoulders: return "Плечи"
+        case .arms: return "Руки"
+        case .core: return "Кор"
+        case .cardio: return "Кардио"
+        }
+    }
+}
+
+struct ExerciseLibraryItem: Identifiable, Hashable {
+    let id: UUID
+    let name: String
+    let group: MuscleGroup
+    let equipment: String
+
+    init(id: UUID = UUID(), name: String, group: MuscleGroup, equipment: String) {
+        self.id = id
+        self.name = name
+        self.group = group
+        self.equipment = equipment
+    }
+}
+
 struct ProgramBuilderDraft: Equatable {
     var sourceProgramID: UUID?
     var name: String
@@ -89,6 +127,7 @@ struct ProgramBuilderDraft: Equatable {
     var assignedClients: Int
     var currentWeek: Int
     var totalWeeks: Int
+    var exerciseIDs: [UUID]
 
     static let empty = ProgramBuilderDraft(
         sourceProgramID: nil,
@@ -96,7 +135,8 @@ struct ProgramBuilderDraft: Equatable {
         category: .strength,
         assignedClients: 0,
         currentWeek: 1,
-        totalWeeks: 8
+        totalWeeks: 8,
+        exerciseIDs: []
     )
 }
 
@@ -125,6 +165,7 @@ final class CoachProgramsViewModel: ObservableObject {
     @Published private(set) var programs: [CoachProgramListItem] = []
     @Published private(set) var lastUpdated: Date = Date()
     @Published var builderDraft: ProgramBuilderDraft = .empty
+    @Published var selectedMuscleGroup: MuscleGroup = .chest
 
     private let repository: any ProgramsRepository
 
@@ -166,6 +207,53 @@ final class CoachProgramsViewModel: ObservableObject {
         Array(programs.prefix(5))
     }
 
+    var exerciseLibrary: [ExerciseLibraryItem] {
+        [
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!, name: "Жим штанги лежа", group: .chest, equipment: "Штанга"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000002")!, name: "Жим гантелей под углом", group: .chest, equipment: "Гантели"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000003")!, name: "Сведения в кроссовере", group: .chest, equipment: "Блочный"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000019")!, name: "Отжимания на брусьях", group: .chest, equipment: "Собственный вес"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000020")!, name: "Отжимания с паузой", group: .chest, equipment: "Собственный вес"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000004")!, name: "Тяга верхнего блока", group: .back, equipment: "Блочный"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000005")!, name: "Тяга штанги в наклоне", group: .back, equipment: "Штанга"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000006")!, name: "Горизонтальная тяга", group: .back, equipment: "Тренажер"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000021")!, name: "Подтягивания широким хватом", group: .back, equipment: "Турник"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000022")!, name: "Тяга Т-грифа", group: .back, equipment: "Тренажер"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000007")!, name: "Присед со штангой", group: .legs, equipment: "Штанга"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000008")!, name: "Жим ногами", group: .legs, equipment: "Тренажер"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000009")!, name: "Румынская тяга", group: .legs, equipment: "Штанга"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000023")!, name: "Выпады с гантелями", group: .legs, equipment: "Гантели"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000024")!, name: "Сгибание ног лежа", group: .legs, equipment: "Тренажер"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000010")!, name: "Жим гантелей сидя", group: .shoulders, equipment: "Гантели"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000011")!, name: "Махи в стороны", group: .shoulders, equipment: "Гантели"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000012")!, name: "Тяга к подбородку", group: .shoulders, equipment: "Штанга"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000025")!, name: "Разведения в наклоне", group: .shoulders, equipment: "Гантели"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000013")!, name: "Сгибания на бицепс", group: .arms, equipment: "Гантели"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000014")!, name: "Французский жим", group: .arms, equipment: "EZ-гриф"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000015")!, name: "Разгибания на блоке", group: .arms, equipment: "Блочный"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000026")!, name: "Молотки стоя", group: .arms, equipment: "Гантели"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000027")!, name: "Отжимания узким хватом", group: .arms, equipment: "Собственный вес"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000016")!, name: "Планка", group: .core, equipment: "Собственный вес"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000017")!, name: "Скручивания", group: .core, equipment: "Собственный вес"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000018")!, name: "Подъем ног в висе", group: .core, equipment: "Турник"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000028")!, name: "Русский твист", group: .core, equipment: "Медбол"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000029")!, name: "Беговая дорожка (интервалы)", group: .cardio, equipment: "Кардио"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000030")!, name: "Эллипс (LISS)", group: .cardio, equipment: "Кардио"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000031")!, name: "Велотренажер (спринты)", group: .cardio, equipment: "Кардио"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000032")!, name: "Гребной тренажер", group: .cardio, equipment: "Кардио"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000033")!, name: "Скакалка интервальная", group: .cardio, equipment: "Собственный вес"),
+            ExerciseLibraryItem(id: UUID(uuidString: "00000000-0000-0000-0000-000000000034")!, name: "Ходьба в горку", group: .cardio, equipment: "Беговая дорожка")
+        ]
+    }
+
+    var filteredExercises: [ExerciseLibraryItem] {
+        exerciseLibrary.filter { $0.group == selectedMuscleGroup }
+    }
+
+    var selectedExercises: [ExerciseLibraryItem] {
+        exerciseLibrary.filter { builderDraft.exerciseIDs.contains($0.id) }
+    }
+
     func startCreateDraft(name: String = "", category: CoachProgramCategory = .strength, totalWeeks: Int = 8) {
         builderDraft = ProgramBuilderDraft(
             sourceProgramID: nil,
@@ -173,7 +261,8 @@ final class CoachProgramsViewModel: ObservableObject {
             category: category,
             assignedClients: 0,
             currentWeek: 1,
-            totalWeeks: max(1, totalWeeks)
+            totalWeeks: max(1, totalWeeks),
+            exerciseIDs: []
         )
     }
 
@@ -185,8 +274,23 @@ final class CoachProgramsViewModel: ObservableObject {
             category: program.category,
             assignedClients: program.assignedClients,
             currentWeek: max(1, program.currentWeek),
-            totalWeeks: max(1, program.totalWeeks)
+            totalWeeks: max(1, program.totalWeeks),
+            exerciseIDs: []
         )
+    }
+
+    func toggleExercise(_ exercise: ExerciseLibraryItem) {
+        if builderDraft.exerciseIDs.contains(exercise.id) {
+            builderDraft.exerciseIDs.removeAll { $0 == exercise.id }
+        } else {
+            builderDraft.exerciseIDs.append(exercise.id)
+        }
+    }
+
+    func assignProgram(programID: UUID, to client: ClientListItem) {
+        guard let index = programs.firstIndex(where: { $0.id == programID }) else { return }
+        programs[index].assignedClients += 1
+        persist()
     }
 
     func saveDraft() -> Result<CoachProgramListItem, ProgramDraftError> {
