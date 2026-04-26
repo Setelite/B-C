@@ -43,8 +43,8 @@ struct CoachTabBarView: View {
         }
         .tint(.brandPrimary)
         .toolbar(.visible, for: .tabBar)
-        .toolbarBackground(.hidden, for: .tabBar)
-        .toolbarColorScheme(.dark, for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
+        .toolbarBackground(Color.bgPrimary, for: .tabBar)
         .onAppear {
             TabBarAppearance.configure()
         }

@@ -4,41 +4,43 @@ struct AIRecommendationsCard: View {
     let recommendations: [String]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 8) {
                 Image(systemName: "sparkles")
-                    .foregroundColor(.yellow)
+                    .foregroundColor(.brandPrimary)
                 Text("AI Рекомендации")
-                    .foregroundColor(.white)
-                    .font(.headline)
+                    .foregroundStyle(Color.textPrimary)
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
             }
 
             if recommendations.isEmpty {
                 Text("Нет рекомендаций")
-                    .foregroundColor(.white.opacity(0.6))
-                    .font(.subheadline)
+                    .foregroundStyle(Color.textSecondary)
+                    .font(.system(size: 16, weight: .medium, design: .rounded))
             } else {
                 VStack(alignment: .leading, spacing: 8) {
                     ForEach(recommendations, id: \.self) { item in
                         HStack(alignment: .top, spacing: 8) {
                             Circle()
-                                .fill(Color.orange)
-                                .frame(width: 6, height: 6)
+                                .fill(Color.brandPrimary)
+                                .frame(width: 7, height: 7)
                                 .padding(.top, 6)
                             Text(item)
-                                .foregroundColor(.orange)
-                                .font(.subheadline)
+                                .foregroundStyle(Color.textPrimary)
+                                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                                .lineLimit(3)
+                                .minimumScaleFactor(0.8)
                         }
                     }
                 }
             }
         }
-        .padding(16)
+        .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white.opacity(0.05))
+        .background(Color.card)
         .overlay(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(Color.white.opacity(0.14), lineWidth: 1)
+                .stroke(Color.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }

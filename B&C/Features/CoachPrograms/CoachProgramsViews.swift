@@ -9,22 +9,8 @@ struct ProgramsLibraryView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [Color.bgPrimary, Color.black],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-            Circle()
-                .fill(Color.brandPrimary.opacity(0.18))
-                .frame(width: 300, height: 300)
-                .blur(radius: 38)
-                .offset(x: 130, y: -250)
-            Circle()
-                .fill(Color.white.opacity(0.08))
-                .frame(width: 240, height: 240)
-                .blur(radius: 26)
-                .offset(x: -150, y: 260)
+            Color.bgPrimary
+                .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
@@ -54,11 +40,13 @@ struct ProgramsLibraryView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("Программы")
-                .font(.system(size: 30, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .font(.system(size: 34, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.textPrimary)
             Text("Библиотека программ, конструктор и отправка подопечным")
-                .font(.system(size: 14, weight: .medium, design: .rounded))
-                .foregroundStyle(.white.opacity(0.72))
+                .font(.system(size: 17, weight: .medium, design: .rounded))
+                .foregroundStyle(Color.textSecondary)
+                .lineLimit(2)
+                .minimumScaleFactor(0.85)
         }
     }
 
@@ -92,34 +80,34 @@ struct ProgramsLibraryView: View {
     private var howItWorksCard: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Как использовать")
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.textPrimary)
             Text("1. Открой конструктор и собери программу.")
-                .foregroundStyle(.white.opacity(0.78))
+                .foregroundStyle(Color.textSecondary)
             Text("2. Добавь упражнения из базы по группам мышц.")
-                .foregroundStyle(.white.opacity(0.78))
+                .foregroundStyle(Color.textSecondary)
             Text("3. Нажми \"Назначить клиенту\" в карточке программы.")
-                .foregroundStyle(.white.opacity(0.78))
+                .foregroundStyle(Color.textSecondary)
         }
-        .font(.system(size: 13, weight: .medium, design: .rounded))
+        .font(.system(size: 16, weight: .medium, design: .rounded))
         .glassCardStyle()
     }
 
     private var categoriesCard: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Категории")
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.textPrimary)
 
             ForEach(programsViewModel.categoryMetrics) { metric in
                 HStack {
                     Label(metric.category.title, systemImage: metric.category.iconName)
-                        .foregroundStyle(.white.opacity(0.86))
+                        .foregroundStyle(Color.textPrimary)
                     Spacer()
                     Text("\(metric.count)")
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.textPrimary)
                 }
-                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .font(.system(size: 16, weight: .semibold, design: .rounded))
             }
         }
         .glassCardStyle()
@@ -128,19 +116,21 @@ struct ProgramsLibraryView: View {
     private var programsList: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Программы в библиотеке")
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.textPrimary)
 
             ForEach(programsViewModel.programs) { program in
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text(program.name)
-                            .font(.system(size: 16, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .foregroundStyle(Color.textPrimary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
                         Spacer()
                         Text("\(program.assignedClients) клиентов")
-                            .font(.system(size: 12, weight: .semibold, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.75))
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .foregroundStyle(Color.textSecondary)
                     }
 
                     HStack(spacing: 8) {
@@ -169,7 +159,7 @@ struct CreateProgramScreenView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(colors: [Color.bgPrimary, Color.black], startPoint: .topLeading, endPoint: .bottomTrailing)
+            Color.bgPrimary
                 .ignoresSafeArea()
 
             VStack(spacing: 12) {
@@ -178,7 +168,7 @@ struct CreateProgramScreenView: View {
                         TextField("Название программы", text: $name)
                             .textInputAutocapitalization(.words)
                             .padding(12)
-                            .background(Color.white.opacity(0.08))
+                            .background(Color.card)
                             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 
                         Picker("Категория", selection: $category) {
@@ -189,7 +179,7 @@ struct CreateProgramScreenView: View {
                         .pickerStyle(.menu)
 
                         Stepper("Длительность: \(totalWeeks) нед.", value: $totalWeeks, in: 1...24)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.textPrimary)
                     }
                 }
 
@@ -219,7 +209,7 @@ struct ProgramBuilderView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(colors: [Color.bgPrimary, Color.black], startPoint: .topLeading, endPoint: .bottomTrailing)
+            Color.bgPrimary
                 .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
@@ -235,7 +225,7 @@ struct ProgramBuilderView: View {
                             )
                             .textInputAutocapitalization(.words)
                             .padding(12)
-                            .background(Color.white.opacity(0.08))
+                            .background(Color.card)
                             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 
                             Picker(
@@ -259,7 +249,7 @@ struct ProgramBuilderView: View {
                                 ),
                                 in: 0...200
                             )
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.textPrimary)
 
                             Stepper(
                                 "Текущая неделя: \(programsViewModel.builderDraft.currentWeek)",
@@ -269,7 +259,7 @@ struct ProgramBuilderView: View {
                                 ),
                                 in: 1...24
                             )
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.textPrimary)
 
                             Stepper(
                                 "Всего недель: \(programsViewModel.builderDraft.totalWeeks)",
@@ -282,15 +272,15 @@ struct ProgramBuilderView: View {
                                 ),
                                 in: 1...24
                             )
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Color.textPrimary)
                         }
                     }
 
                     CardView {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("База упражнений")
-                                .font(.system(size: 16, weight: .bold, design: .rounded))
-                                .foregroundStyle(.white)
+                                .font(.system(size: 22, weight: .bold, design: .rounded))
+                                .foregroundStyle(Color.textPrimary)
 
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
@@ -310,25 +300,28 @@ struct ProgramBuilderView: View {
                                     HStack {
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text(exercise.name)
-                                                .foregroundStyle(.white)
+                                                .foregroundStyle(Color.textPrimary)
+                                                .font(.system(size: 17, weight: .semibold, design: .rounded))
+                                                .lineLimit(1)
+                                                .minimumScaleFactor(0.8)
                                             Text(exercise.equipment)
-                                                .font(.caption)
-                                                .foregroundStyle(.white.opacity(0.65))
+                                                .font(.system(size: 14, weight: .medium, design: .rounded))
+                                                .foregroundStyle(Color.textSecondary)
                                         }
                                         Spacer()
                                         Image(systemName: programsViewModel.builderDraft.exerciseIDs.contains(exercise.id) ? "checkmark.circle.fill" : "circle")
-                                            .foregroundStyle(programsViewModel.builderDraft.exerciseIDs.contains(exercise.id) ? Color.green : Color.white.opacity(0.55))
+                                            .foregroundStyle(programsViewModel.builderDraft.exerciseIDs.contains(exercise.id) ? Color.green : Color.textSecondary)
                                     }
                                     .padding(10)
-                                    .background(Color.white.opacity(0.06))
+                                    .background(Color.card)
                                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                                 }
                                 .buttonStyle(.plain)
                             }
 
                             Text("Выбрано упражнений: \(programsViewModel.builderDraft.exerciseIDs.count)")
-                                .font(.footnote.weight(.semibold))
-                                .foregroundStyle(.white.opacity(0.8))
+                                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                .foregroundStyle(Color.textSecondary)
                         }
                     }
 
@@ -434,7 +427,7 @@ struct ExerciseLibraryView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(colors: [Color.bgPrimary, Color.black], startPoint: .topLeading, endPoint: .bottomTrailing)
+            Color.bgPrimary
                 .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
@@ -442,8 +435,8 @@ struct ExerciseLibraryView: View {
                     CardView {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("База упражнений")
-                                .font(.system(size: 18, weight: .bold, design: .rounded))
-                                .foregroundStyle(.white)
+                                .font(.system(size: 22, weight: .bold, design: .rounded))
+                                .foregroundStyle(Color.textPrimary)
 
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
@@ -460,15 +453,18 @@ struct ExerciseLibraryView: View {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(exercise.name)
-                                            .foregroundStyle(.white)
+                                            .foregroundStyle(Color.textPrimary)
+                                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                                            .lineLimit(1)
+                                            .minimumScaleFactor(0.8)
                                         Text(exercise.equipment)
-                                            .font(.caption)
-                                            .foregroundStyle(.white.opacity(0.65))
+                                            .font(.system(size: 14, weight: .medium, design: .rounded))
+                                            .foregroundStyle(Color.textSecondary)
                                     }
                                     Spacer()
                                 }
                                 .padding(10)
-                                .background(Color.white.opacity(0.06))
+                                .background(Color.card)
                                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                             }
                         }
@@ -519,16 +515,16 @@ private struct ProgramAssignSheet: View {
                             Text(client.name)
                             Text(client.email)
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color.textSecondary)
                         }
                         Spacer()
                         Text(client.status.title)
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.textSecondary)
                     }
                 }
             }
-            .navigationTitle("Отправить: \(program.name)")
+            .navigationTitle("Назначить: \(program.name)")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -546,18 +542,20 @@ private struct MetricTile: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.system(size: 11, weight: .medium, design: .rounded))
-                .foregroundStyle(.white.opacity(0.68))
+                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .foregroundStyle(Color.textSecondary)
             Text(value)
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.textPrimary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
         }
-        .padding(10)
+        .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white.opacity(0.07))
+        .background(Color.card)
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                .stroke(Color.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
@@ -571,34 +569,38 @@ private struct BigActionButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 12) {
+            HStack(spacing: 14) {
                 Image(systemName: icon)
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(.black)
-                    .frame(width: 42, height: 42)
-                    .background(Color.white.opacity(0.9))
+                    .font(.system(size: 22, weight: .bold))
+                    .foregroundStyle(Color.brandPrimary)
+                    .frame(width: 48, height: 48)
+                    .background(Color.buttonPrimaryText.opacity(0.14))
                     .clipShape(Circle())
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.buttonPrimaryText)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                     Text(subtitle)
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.82))
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color.buttonPrimaryText.opacity(0.78))
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .foregroundStyle(.white.opacity(0.75))
+                    .foregroundStyle(Color.buttonPrimaryText.opacity(0.75))
             }
-            .padding(14)
+            .padding(16)
             .frame(maxWidth: .infinity)
-            .background(Color.brandPrimary.opacity(0.86))
+            .background(Color.buttonPrimary)
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(Color.white.opacity(0.18), lineWidth: 1)
+                    .stroke(Color.border, lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
@@ -617,15 +619,18 @@ private struct SmallActionButton: View {
                 Image(systemName: icon)
                 Text(title)
             }
-            .font(.system(size: 13, weight: .semibold, design: .rounded))
-            .foregroundStyle(.white)
+            .font(.system(size: 15, weight: .bold, design: .rounded))
+            .lineLimit(2)
+            .minimumScaleFactor(0.78)
+            .multilineTextAlignment(.center)
+            .foregroundStyle(Color.buttonPrimaryText)
             .padding(.horizontal, 12)
-            .padding(.vertical, 10)
+            .padding(.vertical, 12)
             .frame(maxWidth: .infinity)
-            .background(Color.white.opacity(0.09))
+            .background(Color.buttonPrimary)
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(Color.white.opacity(0.14), lineWidth: 1)
+                    .stroke(Color.border.opacity(0.6), lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
@@ -641,14 +646,16 @@ private struct MuscleGroupChipButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 11, weight: .bold, design: .rounded))
-                .foregroundStyle(isSelected ? Color.black : Color.white.opacity(0.85))
-                .padding(.vertical, 8)
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundStyle(isSelected ? Color.buttonPrimaryText : Color.textPrimary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+                .padding(.vertical, 10)
                 .frame(maxWidth: .infinity)
-                .background(isSelected ? Color.brandPrimary : Color.white.opacity(0.08))
+                .background(isSelected ? Color.buttonPrimary : Color.card)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(Color.white.opacity(isSelected ? 0 : 0.12), lineWidth: 1)
+                        .stroke(Color.border.opacity(isSelected ? 0 : 1), lineWidth: 1)
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         }
@@ -659,14 +666,14 @@ private struct MuscleGroupChipButton: View {
 private extension View {
     func glassCardStyle() -> some View {
         self
-            .padding(14)
+            .padding(18)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.white.opacity(0.05))
+            .background(Color.card)
             .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(Color.white.opacity(0.14), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(Color.border, lineWidth: 1)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
 

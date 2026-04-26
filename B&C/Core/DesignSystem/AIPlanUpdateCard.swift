@@ -8,26 +8,32 @@ struct AIPlanUpdateCard: View {
             HStack(spacing: 8) {
                 Image(systemName: "wand.and.stars")
                     .foregroundColor(.brandPrimary)
-                Text("AI Update Plan")
-                    .foregroundColor(.white)
-                    .font(.headline)
+                Text("AI Обновление плана")
+                    .foregroundStyle(Color.textPrimary)
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
             }
 
             if updates.isEmpty {
                 Text("План без изменений")
-                    .foregroundColor(.white.opacity(0.6))
-                    .font(.subheadline)
+                    .foregroundStyle(Color.textSecondary)
+                    .font(.system(size: 16, weight: .medium, design: .rounded))
             } else {
                 ForEach(updates, id: \.self) { item in
                     Text("• \(item)")
-                        .foregroundColor(.white.opacity(0.9))
-                        .font(.subheadline)
+                        .foregroundStyle(Color.textPrimary)
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .lineLimit(3)
+                        .minimumScaleFactor(0.82)
                 }
             }
         }
-        .padding(16)
+        .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.card)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(Color.border, lineWidth: 1)
+        )
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 }

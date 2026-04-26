@@ -6,28 +6,7 @@ struct CoachHomeView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [Color.bgPrimary, Color.black],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-
-            Circle()
-                .fill(Color.brandPrimary.opacity(0.18))
-                .frame(width: 320, height: 320)
-                .blur(radius: 40)
-                .offset(x: 140, y: -260)
-
-            Circle()
-                .fill(Color.white.opacity(0.08))
-                .frame(width: 260, height: 260)
-                .blur(radius: 28)
-                .offset(x: -160, y: 220)
-
-            NoiseOverlay()
-                .opacity(0.06)
-                .blendMode(.softLight)
+            Color.bgPrimary
                 .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
@@ -249,14 +228,16 @@ private struct RevenueRangeButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 11, weight: .bold, design: .rounded))
-                .foregroundStyle(isSelected ? Color.black : Color.white.opacity(0.85))
-                .padding(.vertical, 8)
+                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .foregroundStyle(isSelected ? Color.buttonPrimaryText : Color.textPrimary)
+                .padding(.vertical, 10)
                 .frame(maxWidth: .infinity)
-                .background(isSelected ? Color.brandPrimary : Color.white.opacity(0.08))
+                .background(isSelected ? Color.buttonPrimary : Color.card)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(Color.white.opacity(isSelected ? 0 : 0.12), lineWidth: 1)
+                        .stroke(Color.border.opacity(isSelected ? 0 : 1), lineWidth: 1)
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         }
@@ -296,21 +277,21 @@ private struct CoachHeaderView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Body&Code")
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
-                        .foregroundColor(.white.opacity(0.8))
+                        .foregroundColor(Color.textSecondary)
 
                     Text("Панель тренера")
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                         .foregroundColor(Color.textPrimary)
                 }
 
                 Spacer()
 
                 Image(systemName: "chart.bar.doc.horizontal.fill")
-                    .foregroundColor(.white)
+                     .foregroundColor(Color.textPrimary)
                     .padding(10)
-                    .background(Color.white.opacity(0.08))
+                    .background(Color.card)
                     .overlay(
-                        Circle().stroke(Color.white.opacity(0.18), lineWidth: 1)
+                        Circle().stroke(Color.border, lineWidth: 1)
                     )
                     .clipShape(Circle())
             }
@@ -385,7 +366,8 @@ private struct ClientsOverviewSection: View {
                 }
             }
             .font(.system(size: 12, weight: .semibold, design: .rounded))
-            .foregroundStyle(.white.opacity(0.76))
+            .lineLimit(1)
+            .foregroundStyle(Color.textSecondary)
 
             HStack(spacing: 8) {
                 ForEach(ClientProgressRange.allCases, id: \.self) { range in
@@ -532,11 +514,11 @@ private struct RevenueCurveChart: View {
             HStack {
                 Text("Выручка")
                     .font(.system(size: 12, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.72))
+                    .foregroundStyle(Color.textSecondary)
                 Spacer()
                 Text((values.last ?? 0).formattedRubles)
                     .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                     .foregroundStyle(Color.textPrimary)
             }
 
             GeometryReader { geo in
@@ -577,11 +559,7 @@ private struct RevenueCurveChart: View {
                         path.closeSubpath()
                     }
                     .fill(
-                        LinearGradient(
-                            colors: [Color.brandPrimary.opacity(0.24), Color.brandPrimary.opacity(0.03)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
+                        Color.brandPrimary.opacity(0.12)
                     )
                 }
             }
@@ -590,17 +568,20 @@ private struct RevenueCurveChart: View {
             HStack {
                 ForEach(labels.indices, id: \.self) { index in
                     Text(labels[index])
-                        .font(.system(size: 10, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.6))
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.72)
                         .frame(maxWidth: .infinity)
                 }
             }
         }
         .padding(10)
-        .background(Color.white.opacity(0.05))
+        .background(Color.card)
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                .stroke(Color.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
@@ -615,16 +596,19 @@ private struct CompactActionButton: View {
         Button(action: action) {
             HStack(spacing: 6) {
                 Image(systemName: icon)
+                    .foregroundStyle(Color.brandPrimary)
                 Text(title)
             }
-            .font(.system(size: 12, weight: .semibold, design: .rounded))
-            .foregroundStyle(.white)
-            .padding(.vertical, 9)
+            .font(.system(size: 15, weight: .bold, design: .rounded))
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
+            .foregroundStyle(Color.buttonPrimaryText)
+            .padding(.vertical, 12)
             .frame(maxWidth: .infinity)
-            .background(Color.white.opacity(0.08))
+            .background(Color.buttonPrimary)
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                    .stroke(Color.border.opacity(0.6), lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
@@ -649,11 +633,13 @@ private struct SectionHeader: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.system(size: 18, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                 .foregroundStyle(Color.textPrimary)
             Text(subtitle)
-                .font(.system(size: 13, weight: .regular, design: .rounded))
-                .foregroundStyle(.white.opacity(0.7))
+                .font(.system(size: 16, weight: .regular, design: .rounded))
+                .foregroundStyle(Color.textSecondary)
+                .lineLimit(2)
+                .minimumScaleFactor(0.82)
         }
     }
 }
@@ -665,18 +651,20 @@ private struct MetricPill: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(.system(size: 11, weight: .medium, design: .rounded))
-                .foregroundStyle(.white.opacity(0.65))
+                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .foregroundStyle(Color.textSecondary)
             Text(value)
-                .font(.system(size: 14, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .font(.system(size: 18, weight: .bold, design: .rounded))
+                 .foregroundStyle(Color.textPrimary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background(Color.white.opacity(0.06))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(Color.card)
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                .stroke(Color.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
@@ -702,11 +690,11 @@ private struct ClientsCurveCard: View {
             HStack {
                 Text("Кривая прогресса клиентов")
                     .font(.system(size: 12, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.72))
+                    .foregroundStyle(Color.textSecondary)
                 Spacer()
                 Text("\(values.last ?? 0)%")
                     .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                     .foregroundStyle(Color.textPrimary)
             }
 
             GeometryReader { geo in
@@ -732,19 +720,20 @@ private struct ClientsCurveCard: View {
             HStack {
                 ForEach(labels.indices, id: \.self) { index in
                     Text(labels[index])
-                        .font(.system(size: 9, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.58))
-                        .lineLimit(1)
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color.textSecondary)
+                        .lineLimit(2)
                         .minimumScaleFactor(0.7)
+                        .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
                 }
             }
         }
         .padding(10)
-        .background(Color.white.opacity(0.05))
+        .background(Color.card)
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                .stroke(Color.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
@@ -773,7 +762,7 @@ private struct StackedShareBar: View {
                 )
             }
         }
-        .background(Color.white.opacity(0.08))
+        .background(Color.card)
         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
     }
 }
@@ -788,19 +777,19 @@ private struct DashboardTableCard: View {
             HStack {
                 ForEach(headers, id: \.self) { header in
                     Text(header)
-                        .font(.system(size: 11, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.7))
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 8)
-            .background(Color.white.opacity(0.06))
+            .background(Color.card)
 
             if rows.isEmpty {
-                Text(emptyTitle)
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.7))
+                    Text(emptyTitle)
+                        .font(.system(size: 16, weight: .medium, design: .rounded))
+                    .foregroundStyle(Color.textSecondary)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 12)
             } else {
@@ -808,8 +797,10 @@ private struct DashboardTableCard: View {
                     HStack {
                         ForEach(row.indices, id: \.self) { index in
                             Text(row[index])
-                                .font(.system(size: 12, weight: .medium, design: .rounded))
-                                .foregroundStyle(.white)
+                                .font(.system(size: 14, weight: .medium, design: .rounded))
+                                 .foregroundStyle(Color.textPrimary)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.8)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
@@ -817,15 +808,15 @@ private struct DashboardTableCard: View {
                     .padding(.vertical, 10)
 
                     if row != rows.last {
-                        Divider().overlay(Color.white.opacity(0.09))
+                        Divider().overlay(Color.border)
                     }
                 }
             }
         }
-        .background(Color.white.opacity(0.04))
+        .background(Color.card)
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                .stroke(Color.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
@@ -850,11 +841,11 @@ private struct ProgramIconNode: View {
                 .clipShape(Circle())
             Text(title)
                 .font(.system(size: 10, weight: .semibold, design: .rounded))
-                .foregroundStyle(.white.opacity(0.84))
+                .foregroundStyle(Color.textPrimary)
                 .lineLimit(1)
             Text("\(count)")
                 .font(.system(size: 10, weight: .bold, design: .rounded))
-                .foregroundStyle(.white.opacity(0.72))
+                .foregroundStyle(Color.textSecondary)
         }
         .frame(maxWidth: .infinity)
     }
@@ -873,12 +864,12 @@ private struct ProgramDistributionBars: View {
                 HStack(spacing: 8) {
                     Text(item.name)
                         .font(.system(size: 11, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.72))
+                        .foregroundStyle(Color.textSecondary)
                         .frame(width: 86, alignment: .leading)
 
                     GeometryReader { geo in
                         RoundedRectangle(cornerRadius: 4, style: .continuous)
-                            .fill(Color.white.opacity(0.08))
+                            .fill(Color.card)
                             .overlay(alignment: .leading) {
                                 RoundedRectangle(cornerRadius: 4, style: .continuous)
                                     .fill(Color.brandPrimary.opacity(0.9))
@@ -889,7 +880,7 @@ private struct ProgramDistributionBars: View {
 
                     Text("\(item.assignedClients)")
                         .font(.system(size: 11, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
+                         .foregroundStyle(Color.textPrimary)
                         .frame(width: 24, alignment: .trailing)
                 }
             }
@@ -916,11 +907,11 @@ private struct SparklineCard: View {
             HStack {
                 Text("Тренд прогресса")
                     .font(.system(size: 12, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.72))
+                    .foregroundStyle(Color.textSecondary)
                 Spacer()
                 Text("\(values.last ?? 0)%")
                     .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                     .foregroundStyle(Color.textPrimary)
             }
 
             GeometryReader { geo in
@@ -944,10 +935,10 @@ private struct SparklineCard: View {
             .frame(height: 56)
         }
         .padding(10)
-        .background(Color.white.opacity(0.05))
+        .background(Color.card)
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                .stroke(Color.border, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
@@ -956,12 +947,12 @@ private struct SparklineCard: View {
 private struct GlassCardModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .padding(16)
+            .padding(18)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.white.opacity(0.05))
+            .background(Color.card)
             .overlay(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .stroke(Color.white.opacity(0.14), lineWidth: 1)
+                    .stroke(Color.border, lineWidth: 1)
             )
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }

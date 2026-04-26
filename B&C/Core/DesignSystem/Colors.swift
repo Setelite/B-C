@@ -1,8 +1,16 @@
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 extension Color {
-    static let bgPrimary = Color(hex: "#0F172A")
-    static let card = Color(hex: "#1E293B")
+    static let bgPrimary = Color.dynamic(light: "#FFFFFF", dark: "#0F0F10")
+    static let card = Color.dynamic(light: "#F4F4F5", dark: "#18181B")
+    static let textPrimary = Color.dynamic(light: "#111111", dark: "#FAFAFA")
+    static let textSecondary = Color.dynamic(light: "#6B7280", dark: "#A1A1AA")
+    static let border = Color.dynamic(light: "#E5E7EB", dark: "#27272A")
+    static let buttonPrimary = Color.dynamic(light: "#111111", dark: "#FAFAFA")
+    static let buttonPrimaryText = Color.dynamic(light: "#FFFFFF", dark: "#111111")
 
     /// Brand accent color (Figma: "#FF7A00").
     /// Note: can't name it `primary` because SwiftUI already has `Color.primary`.
@@ -35,5 +43,16 @@ extension Color {
             opacity: Double(a) / 255
         )
     }
-}
 
+    static func dynamic(light: String, dark: String) -> Color {
+        Color(
+            UIColor { trait in
+                if trait.userInterfaceStyle == .dark {
+                    return UIColor(Color(hex: dark))
+                } else {
+                    return UIColor(Color(hex: light))
+                }
+            }
+        )
+    }
+}

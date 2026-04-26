@@ -9,7 +9,7 @@ struct DebugMenuView: View {
                 Text("Debug Menu")
                     .font(.title2)
                     .fontWeight(.semibold)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.textPrimary)
 
                 CardView {
                     VStack(spacing: 12) {
@@ -52,4 +52,3 @@ struct DebugMenuView: View {
 #Preview {
     FlowCoordinatorView()
 }
-

@@ -10,12 +10,12 @@ struct AppScreen: View {
                 Text(title)
                     .font(.title2)
                     .fontWeight(.semibold)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.textPrimary)
 
                 if let subtitle {
                     Text(subtitle)
                         .font(.body)
-                        .foregroundStyle(.white.opacity(0.72))
+                        .foregroundStyle(Color.textSecondary)
                 }
 
                 Spacer(minLength: 0)

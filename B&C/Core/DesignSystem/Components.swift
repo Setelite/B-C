@@ -9,9 +9,13 @@ struct CardView<Content: View>: View {
 
     var body: some View {
         content
-            .padding(16)
+            .padding(20)
             .background(Color.card)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(Color.border, lineWidth: 1)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
 
@@ -33,23 +37,25 @@ struct PrimaryButton: View {
 
     private var label: some View {
         Text(title)
-            .font(.headline)
-            .foregroundColor(.white)
+            .font(.system(size: 18, weight: .semibold, design: .rounded))
+            .foregroundColor(Color.buttonPrimaryText)
+            .lineLimit(2)
+            .minimumScaleFactor(0.85)
+            .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .padding(.horizontal, 16)
-            .background(Color.brandPrimary)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .padding(.vertical, 18)
+            .padding(.horizontal, 20)
+            .background(Color.buttonPrimary)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 }
 
 #Preview {
     VStack(spacing: 16) {
-        CardView { Text("Card").foregroundStyle(.white) }
+        CardView { Text("Card").foregroundStyle(Color.textPrimary) }
         PrimaryButton(title: "Continue")
         PrimaryButton(title: "Continue", action: {})
     }
     .padding()
     .background(Color.bgPrimary)
 }
-
